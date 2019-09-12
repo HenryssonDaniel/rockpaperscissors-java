@@ -2,6 +2,7 @@ package io.github.henryssondaniel.rockpaperscissors.v1._0;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
@@ -31,19 +32,16 @@ public class GamesResource {
   @Produces(MediaType.TEXT_PLAIN)
   public String checkState(@PathParam(ID) String id) {
     LOGGER.log(Level.FINE, "Check state");
-    return games.stream()
-        .filter(game -> game.equals(id))
-        .findFirst()
-        .map(game -> game.getState().getMessage())
-        .orElse("The ID does not exist.");
+    return getGame(id).map(Game::getState).orElse("The ID does not exist.");
   }
 
   @Consumes(MediaType.APPLICATION_JSON)
   @POST
   @Path("{id}/join")
-  public static Response join(@PathParam(ID) String id) {
+  @Produces(MediaType.TEXT_PLAIN)
+  public String join(String data, @PathParam(ID) String id) {
     LOGGER.log(Level.FINE, "Join");
-    return Response.ok().build();
+    return getGame(id).map(game -> join(data, id, game)).orElse("The ID does not exist.");
   }
 
   @Consumes(MediaType.APPLICATION_JSON)
@@ -76,5 +74,21 @@ public class GamesResource {
     games.add(game);
 
     return game.getUuid().toString();
+  }
+
+  private Optional<Game> getGame(@PathParam(ID) String id) {
+    return games.stream().filter(game -> game.getUuid().toString().equals(id)).findFirst();
+  }
+
+  private static String join(String data, @PathParam(ID) String id, Game game) {
+    var message = "The key \"name\" has to be provided in the request body.";
+
+    if (!data.isEmpty()) {
+      var jsonObject = new JSONObject(data);
+
+      if (jsonObject.has("name")) message = game.join(id);
+    }
+
+    return message;
   }
 }
