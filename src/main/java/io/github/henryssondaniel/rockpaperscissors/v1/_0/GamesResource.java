@@ -1,5 +1,7 @@
 package io.github.henryssondaniel.rockpaperscissors.v1._0;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
@@ -10,6 +12,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.json.JSONObject;
 
 /**
  * Games resource. Handles games related requests.
@@ -21,12 +24,18 @@ public class GamesResource {
   private static final String ID = "id";
   private static final Logger LOGGER = Logger.getLogger(GamesResource.class.getName());
 
-  @POST
+  private final Collection<Game> games = new HashSet<>(0);
+
+  @GET
   @Path("{id}")
   @Produces(MediaType.TEXT_PLAIN)
-  public static String checkState(@PathParam(ID) String id) {
+  public String checkState(@PathParam(ID) String id) {
     LOGGER.log(Level.FINE, "Check state");
-    return "State...";
+    return games.stream()
+        .filter(game -> game.equals(id))
+        .findFirst()
+        .map(game -> game.getState().getMessage())
+        .orElse("The ID does not exist.");
   }
 
   @Consumes(MediaType.APPLICATION_JSON)
@@ -46,10 +55,26 @@ public class GamesResource {
   }
 
   @Consumes(MediaType.APPLICATION_JSON)
-  @GET
+  @POST
   @Produces(MediaType.TEXT_PLAIN)
-  public static String newGame() {
+  public String newGame(String data) {
     LOGGER.log(Level.FINE, "New game");
-    return "123";
+
+    var message = "The key \"name\" has to be provided in the request body.";
+
+    if (!data.isEmpty()) {
+      var jsonObject = new JSONObject(data);
+
+      if (jsonObject.has("name")) message = createGame(jsonObject);
+    }
+
+    return message;
+  }
+
+  private String createGame(JSONObject jsonObject) {
+    Game game = new GameImpl(jsonObject.getString("name"));
+    games.add(game);
+
+    return game.getUuid().toString();
   }
 }
