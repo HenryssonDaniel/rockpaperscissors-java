@@ -15,14 +15,20 @@ import javax.ws.rs.core.MediaType;
 import org.json.JSONObject;
 
 /**
- * Games resource. Handles games related requests.
+ * Games resource. Handles games related requests. The class itself does not contain much logic.
+ * This class takes the request, converts it to the correct format, talk to the correct game and
+ * returns the response.
  *
  * @since 1.0
  */
 @Path("{a:v1/games|v1.0/games|games}")
 public class GamesResource {
+  private static final String ERROR_NAME =
+      "The key \"name\" has to be provided in the request body.";
   private static final String ID = "id";
   private static final Logger LOGGER = Logger.getLogger(GamesResource.class.getName());
+  private static final String MOVE = "move";
+  private static final String NAME = "name";
 
   private final Collection<Game> games = new HashSet<>(0);
 
@@ -58,19 +64,19 @@ public class GamesResource {
   public String newGame(String data) {
     LOGGER.log(Level.FINE, "New game");
 
-    var message = "The key \"name\" has to be provided in the request body.";
+    var message = ERROR_NAME;
 
     if (!data.isEmpty()) {
       var jsonObject = new JSONObject(data);
 
-      if (jsonObject.has("name")) message = createGame(jsonObject);
+      if (jsonObject.has(NAME)) message = createGame(jsonObject);
     }
 
     return message;
   }
 
   private String createGame(JSONObject jsonObject) {
-    Game game = new GameImpl(jsonObject.getString("name"));
+    Game game = new GameImpl(jsonObject.getString(NAME));
     games.add(game);
 
     return game.getUuid().toString();
@@ -81,12 +87,12 @@ public class GamesResource {
   }
 
   private static String join(String data, Game game) {
-    var message = "The key \"name\" has to be provided in the request body.";
+    var message = ERROR_NAME;
 
     if (!data.isEmpty()) {
       var jsonObject = new JSONObject(data);
 
-      if (jsonObject.has("name")) message = game.join(jsonObject.getString("name"));
+      if (jsonObject.has(NAME)) message = game.join(jsonObject.getString(NAME));
     }
 
     return message;
@@ -98,8 +104,8 @@ public class GamesResource {
     if (!data.isEmpty()) {
       var jsonObject = new JSONObject(data);
 
-      if (jsonObject.has("move") && jsonObject.has("name"))
-        message = game.move(jsonObject.getString("move"), jsonObject.getString("name"));
+      if (jsonObject.has(MOVE) && jsonObject.has(NAME))
+        message = game.move(jsonObject.getString(MOVE), jsonObject.getString(NAME));
     }
 
     return message;
