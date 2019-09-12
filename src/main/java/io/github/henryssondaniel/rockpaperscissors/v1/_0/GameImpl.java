@@ -2,6 +2,7 @@ package io.github.henryssondaniel.rockpaperscissors.v1._0;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.UUID;
 
 class GameImpl implements Game {
@@ -61,8 +62,28 @@ class GameImpl implements Game {
     return message;
   }
 
+  @Override
+  public String move(String move, String name) {
+    String message;
+
+    var player =
+        players.stream().filter(player1 -> player1.getName().equals(name)).findFirst().orElse(null);
+
+    if (player == null) message = "The name does not exist in this game.";
+    else if (player.getHand() == null)
+      try {
+        player.setHand(Hand.valueOf(move.toUpperCase(Locale.getDefault())));
+        message = "OK";
+      } catch (IllegalArgumentException ignored) {
+        message = "The move is not valid.";
+      }
+    else message = "A move is already done for this player.";
+
+    return message;
+  }
+
   private static Player getPlayer(Player player1, Player player2) {
-    return player1.getHand() == null ? player2 : player1;
+    return player1.getHand() == null ? player1 : player2;
   }
 
   private static String getState(Player player1, Player player2) {

@@ -12,7 +12,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import org.json.JSONObject;
 
 /**
@@ -41,15 +40,16 @@ public class GamesResource {
   @Produces(MediaType.TEXT_PLAIN)
   public String join(String data, @PathParam(ID) String id) {
     LOGGER.log(Level.FINE, "Join");
-    return getGame(id).map(game -> join(data, id, game)).orElse("The ID does not exist.");
+    return getGame(id).map(game -> join(data, game)).orElse("The ID does not exist.");
   }
 
   @Consumes(MediaType.APPLICATION_JSON)
   @POST
   @Path("{id}/move")
-  public static Response move(@PathParam(ID) String id) {
+  @Produces(MediaType.TEXT_PLAIN)
+  public String move(String data, @PathParam(ID) String id) {
     LOGGER.log(Level.FINE, "Move");
-    return Response.ok().build();
+    return getGame(id).map(game -> move(data, game)).orElse("The ID does not exist.");
   }
 
   @Consumes(MediaType.APPLICATION_JSON)
@@ -76,17 +76,30 @@ public class GamesResource {
     return game.getUuid().toString();
   }
 
-  private Optional<Game> getGame(@PathParam(ID) String id) {
+  private Optional<Game> getGame(String id) {
     return games.stream().filter(game -> game.getUuid().toString().equals(id)).findFirst();
   }
 
-  private static String join(String data, @PathParam(ID) String id, Game game) {
+  private static String join(String data, Game game) {
     var message = "The key \"name\" has to be provided in the request body.";
 
     if (!data.isEmpty()) {
       var jsonObject = new JSONObject(data);
 
-      if (jsonObject.has("name")) message = game.join(id);
+      if (jsonObject.has("name")) message = game.join(jsonObject.getString("name"));
+    }
+
+    return message;
+  }
+
+  private static String move(String data, Game game) {
+    var message = "The key \"name\" and \"move\" has to be provided in the request body.";
+
+    if (!data.isEmpty()) {
+      var jsonObject = new JSONObject(data);
+
+      if (jsonObject.has("move") && jsonObject.has("name"))
+        message = game.move(jsonObject.getString("move"), jsonObject.getString("name"));
     }
 
     return message;
