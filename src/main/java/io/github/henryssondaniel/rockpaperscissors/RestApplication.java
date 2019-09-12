@@ -1,6 +1,6 @@
 package io.github.henryssondaniel.rockpaperscissors;
 
-import io.github.henryssondaniel.rockpaperscissors.v1._0.GamesResource;
+import io.github.henryssondaniel.rockpaperscissors.v1._0.GamesResourceImpl;
 import java.util.Collections;
 import java.util.Set;
 import java.util.logging.Level;
@@ -17,7 +17,7 @@ import javax.ws.rs.core.Application;
 @ApplicationPath("api")
 public class RestApplication extends Application {
   private static final Logger LOGGER = Logger.getLogger(RestApplication.class.getName());
-  private final Set<Object> singletons = Collections.singleton(new GamesResource());
+  private final Set<Object> singletons = Collections.singleton(new GamesResourceImpl());
 
   @Override
   public Set<Object> getSingletons() {

@@ -1,7 +1,7 @@
 package io.github.henryssondaniel.rockpaperscissors.v1._0;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 class GameImpl implements Game {
   private static final Logger LOGGER = Logger.getLogger(GameImpl.class.getName());
 
-  private final Collection<Player> players = new HashSet<>(2);
+  private final Collection<Player> players = new LinkedHashSet<>(2);
   private final UUID uuid = UUID.randomUUID();
 
   GameImpl(String name) {
