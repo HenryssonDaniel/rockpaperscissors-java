@@ -1,6 +1,9 @@
 plugins {
-    id 'java'
-    id 'org.gretty' version '2.3.1'
+    id 'jacoco'
+    id 'maven-publish'
+    id 'org.sonarqube' version '2.7.1'
+    id 'signing'
+    id 'war'
 }
 
 group = 'io.github.henryssondaniel'
@@ -22,7 +25,23 @@ task integrationTest(type: Test) {
     shouldRunAfter test
 }
 
+task integrationTestReport(type: JacocoReport) {
+    executionData integrationTest
+    sourceSets sourceSets.intTest
+}
+
+task javadocJar(type: Jar) {
+    from javadoc
+    archiveClassifier = 'javadoc'
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allJava
+    archiveClassifier = 'sources'
+}
+
 check.dependsOn integrationTest
+jacocoTestReport.dependsOn integrationTestReport
 
 tasks.withType(Test) {
     useJUnitPlatform()
@@ -38,15 +57,88 @@ configurations {
 }
 
 dependencies {
-    compile 'org.jboss.resteasy:resteasy-jaxrs:3.9.0.Final'
-    compile 'org.jboss.resteasy:resteasy-servlet-initializer:4.3.0.Final'
+    compile 'javax.ws.rs:javax.ws.rs-api:2.1.1'
     compile 'org.json:json:20180813'
+    testCompile 'org.glassfish.jersey.core:jersey-common:2.29'
     testImplementation 'org.assertj:assertj-core:3.12.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.1'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.5.1'
     testImplementation 'org.mockito:mockito-core:3.0.0'
 }
 
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.web
+            artifact sourcesJar
+            artifact javadocJar
+
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('runtimeClasspath')
+                }
+
+                usage('java-runtime') {
+                    fromResolutionResult()
+                }
+            }
+
+            pom {
+                name = project.group + ':' + project.name
+                description = 'Rock paper scissors game'
+                url = 'https://github.com/HenryssonDaniel/rockpaperscissors-java'
+
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'http://www.opensource.org/licenses/mit-license.php'
+                    }
+                }
+
+                developers {
+                    developer {
+                        name = 'Daniel Henrysson'
+                        email = 'henrysson.daniel@gmail.com'
+                        organization = 'Daniel Henrysson AB'
+                        organizationUrl = 'https://github.com/HenryssonDaniel'
+                    }
+                }
+
+                scm {
+                    connection = 'scm:git:git://github.com/HenryssonDaniel/rockpaperscissors-java.git'
+                    developerConnection = 'scm:git:ssh://github.com/HenryssonDaniel/rockpaperscissors-java.git'
+                    url = 'https://github.com/HenryssonDaniel/rockpaperscissors-java'
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            def repoUrl = "https://oss.sonatype.org/"
+            def releasesRepoUrl = repoUrl + "service/local/staging/deploy/maven2"
+            def snapshotsRepoUrl = repoUrl + "content/repositories/snapshots"
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+
+            if (project.hasProperty('ossrhUsername')) {
+                credentials {
+                    username = ossrhUsername
+                    password = ossrhPassword
+                }
+            }
+        }
+    }
+}
+
 repositories {
     jcenter()
+}
+
+signing {
+    sign publishing.publications.mavenJava
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "HenryssonDaniel_rockpaperscissors-java"
+    }
 }
