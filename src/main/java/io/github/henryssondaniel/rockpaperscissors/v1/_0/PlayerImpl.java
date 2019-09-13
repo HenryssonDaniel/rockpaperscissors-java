@@ -1,6 +1,5 @@
 package io.github.henryssondaniel.rockpaperscissors.v1._0;
 
-/** Player implementation. Does not contain any logic, just setters and getters. */
 class PlayerImpl implements Player {
   private final String name;
   private Hand hand;

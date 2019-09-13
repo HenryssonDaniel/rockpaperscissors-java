@@ -7,7 +7,6 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/** The game implementation. This class contains all the logic for the game. */
 class GameImpl implements Game {
   private static final Logger LOGGER = Logger.getLogger(GameImpl.class.getName());
 
@@ -23,8 +22,6 @@ class GameImpl implements Game {
     LOGGER.log(Level.FINE, "Get state");
     String message;
 
-    // The size can't be 0, since a player is added in the constructor. If the size is 1, we know
-    // the second player has not joined.
     if (players.size() == 1) message = "Waiting for the second player to join the game.";
     else {
       var iterator = players.iterator();
@@ -37,7 +34,6 @@ class GameImpl implements Game {
       message =
           hand1 == null || hand2 == null
               ? getState(player1, player2)
-              // Both players made a move, so check who has the winning hand.
               : player1.getName()
                   + ": "
                   + hand1
@@ -62,7 +58,6 @@ class GameImpl implements Game {
     LOGGER.log(Level.FINE, "Join");
     String message;
 
-    // Loop through with a filter to see if the name exists.
     if (players.stream().anyMatch(player -> player.getName().equals(name)))
       message = "The name is already taken. Please choose another name and join the game again.";
     else {
@@ -78,12 +73,10 @@ class GameImpl implements Game {
     LOGGER.log(Level.FINE, "Move");
     String message;
 
-    // Retrieve the player by name. If no player is found, return null
     var player =
         players.stream().filter(player1 -> player1.getName().equals(name)).findFirst().orElse(null);
 
     if (player == null) message = "The name does not exist in this game.";
-    // If a hand is already set, the new hand will be ignored.
     else if (player.getHand() == null)
       try {
         player.setHand(Hand.valueOf(move.toUpperCase(Locale.getDefault())));
