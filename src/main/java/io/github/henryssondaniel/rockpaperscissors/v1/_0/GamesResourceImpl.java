@@ -26,6 +26,7 @@ public class GamesResourceImpl implements GamesResource {
   private static final String ERROR_NAME =
       "The key \"name\" has to be provided in the request body.";
   private static final String ID = "id";
+  private static final String ID_DOES_NOT_EXIST = "The ID does not exist.";
   private static final Logger LOGGER = Logger.getLogger(GamesResourceImpl.class.getName());
   private static final String MOVE = "move";
   private static final String NAME = "name";
@@ -38,7 +39,7 @@ public class GamesResourceImpl implements GamesResource {
   @Produces(MediaType.TEXT_PLAIN)
   public String checkState(@PathParam(ID) String id) {
     LOGGER.log(Level.FINE, "Check state");
-    return getGame(id).map(Game::getState).orElse("The ID does not exist.");
+    return getGame(id).map(Game::getState).orElse(ID_DOES_NOT_EXIST);
   }
 
   @Consumes(MediaType.APPLICATION_JSON)
@@ -48,7 +49,7 @@ public class GamesResourceImpl implements GamesResource {
   @Produces(MediaType.TEXT_PLAIN)
   public String join(String data, @PathParam(ID) String id) {
     LOGGER.log(Level.FINE, "Join");
-    return getGame(id).map(game -> join(data, game)).orElse("The ID does not exist.");
+    return getGame(id).map(game -> join(data, game)).orElse(ID_DOES_NOT_EXIST);
   }
 
   @Consumes(MediaType.APPLICATION_JSON)
@@ -58,7 +59,7 @@ public class GamesResourceImpl implements GamesResource {
   @Produces(MediaType.TEXT_PLAIN)
   public String move(String data, @PathParam(ID) String id) {
     LOGGER.log(Level.FINE, "Move");
-    return getGame(id).map(game -> move(data, game)).orElse("The ID does not exist.");
+    return getGame(id).map(game -> move(data, game)).orElse(ID_DOES_NOT_EXIST);
   }
 
   @Consumes(MediaType.APPLICATION_JSON)
