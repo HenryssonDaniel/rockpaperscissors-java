@@ -1,3 +1,9 @@
+# Rock paper scissors game
+[![Build Status](https://travis-ci.com/HenryssonDaniel/rockpaperscissors-java.svg?branch=master)](https://travis-ci.com/HenryssonDaniel/rockpaperscissors-java)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=HenryssonDaniel_rockpaperscissors-java&metric=coverage)](https://sonarcloud.io/dashboard?id=HenryssonDaniel_rockpaperscissors-java)
+[![latest release](https://img.shields.io/badge/release%20notes-1.0.0-yellow.svg)](https://github.com/HenryssonDaniel/rockpaperscissors-java/blob/master/doc/release-notes/official.md)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.henryssondaniel/rockpaperscissors.svg)](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22io.github.henryssondaniel%22%20AND%20a%3A%22rockpaperscissors%22)
+[![Javadocs](https://www.javadoc.io/badge/io.github.henryssondaniel/rockpaperscissors.svg)](https://www.javadoc.io/doc/io.github.henryssondaniel/rockpaperscissors)
 ## Start the application
 The application requires Java 11 and Gradle.  
 
