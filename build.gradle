@@ -58,7 +58,7 @@ configurations {
 
 dependencies {
     compile 'javax.ws.rs:javax.ws.rs-api:2.1.1'
-    compile 'org.json:json:20180813'
+    compile 'org.json:json:20190722'
     testCompile 'org.glassfish.jersey.core:jersey-common:2.29'
     testImplementation 'org.assertj:assertj-core:3.12.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.1'
