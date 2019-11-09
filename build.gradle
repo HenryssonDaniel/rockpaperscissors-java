@@ -57,9 +57,9 @@ configurations {
 }
 
 dependencies {
-    compile 'javax.ws.rs:javax.ws.rs-api:2.1.1'
-    compile 'org.json:json:20190722'
-    testCompile 'org.glassfish.jersey.core:jersey-common:2.29.1'
+    implementation 'javax.ws.rs:javax.ws.rs-api:2.1.1'
+    implementation 'org.json:json:20190722'
+    testImplementation 'org.glassfish.jersey.core:jersey-common:2.29.1'
     testImplementation 'org.assertj:assertj-core:3.14.0'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0-M1'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.6.0-M1'
