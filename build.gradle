@@ -43,6 +43,10 @@ task sourcesJar(type: Jar) {
 check.dependsOn integrationTest
 jacocoTestReport.dependsOn integrationTestReport
 
+tasks.withType(GenerateModuleMetadata) {
+    enabled = false
+}
+
 tasks.withType(Test) {
     useJUnitPlatform()
 
